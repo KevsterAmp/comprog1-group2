@@ -15,9 +15,11 @@ struct user {
     int year;
     int month;
     int day;
+    int cost;
 };
-
 struct equipment eqp[5];
+
+void print_equipment(int i, struct equipment eqp[]);
 
 int main(void) {
     // Equipment initialization
@@ -50,8 +52,10 @@ int main(void) {
     for (int i = 0; i < 5; i++) {
         eqp[i].avail_quantity = 100;
     }
-
+    
+    // User initialization
     struct user user_1;
+    user_1.cost = 0;
     int item_no, quantity;
 
     // User input
@@ -69,43 +73,58 @@ int main(void) {
         printf("\nEnter item number (1-5) Press 0 to exit: ");
         scanf("%d", &item_no);
 
-        if (item_no > 5 || item_no < 1) {
+        if (item_no == 0) {
+            break;
+        }
+
+        else if (item_no > 5 || item_no < 1) {
             printf("Invalid item number\n");
             continue;
         } 
 
-        else if (item_no == 0) {
-            break;
-        }
         
         else {
-            printf("Item name: %s\n", eqp[item_no - 1].item_name);
-            printf("Item number: %d\n", eqp[item_no - 1].item_no);
-            printf("Item description: %s\n", eqp[item_no - 1].item_description);
-            printf("Item unit price: %d\n", eqp[item_no - 1].unit_price);
-            printf("Item available quantity: %d\n", eqp[item_no - 1].avail_quantity);
-
-            printf("\nInsert quantities to be borrowed: ");
+            print_equipment(item_no - 1, eqp);
+            printf("\nInsert number of quantities to be borrowed (Press 0 to exit): ");
             scanf("%d", &quantity);
 
-            if (quantity > eqp[item_no - 1].avail_quantity) {
+            if (quantity == 0) {
+                continue;
+            }
+            
+            else if (quantity > eqp[item_no - 1].avail_quantity) {
                 printf("Not enough quantity\n");
                 continue;
             }
 
             else {
                 eqp[item_no - 1].avail_quantity -= quantity;
-
-                printf("Item name: %s\n", eqp[item_no - 1].item_name);
-                printf("Item number: %d\n", eqp[item_no - 1].item_no);
-                printf("Item description: %s\n", eqp[item_no - 1].item_description);
-                printf("Item unit price: %d\n", eqp[item_no - 1].unit_price);
-                printf("Item available quantity: %d\n", eqp[item_no - 1].avail_quantity);
+                user_1.cost += eqp[item_no - 1].unit_price * quantity;
+                printf("Borrowed successfully\n");
+                print_equipment(item_no - 1, eqp);
                 continue;
             }
         }
 
     }
 
+    for (int i = 0; i < 5; i++) 
+        print_equipment(i, eqp);
+    
+    printf("\n\nUser Information:\n");
+    printf("Name: %s\n", user_1.name);
+    printf("Type: %d\n", user_1.type);
+    printf("Date: %d/%d/%d\n", user_1.year, user_1.month, user_1.day);
+    printf("Cost: %d\n", user_1.cost);
+        
     return 0;
+}
+
+void print_equipment(int i, struct equipment eqp[]) {
+    printf("\n\nEquipment Information\n");
+    printf("Item name: %s\n", eqp[i].item_name);
+    printf("Item number: %d\n", eqp[i].item_no);
+    printf("Item description: %s\n", eqp[i].item_description);
+    printf("Item unit price: %d\n", eqp[i].unit_price);
+    printf("Item available quantity: %d\n", eqp[i].avail_quantity);
 }
