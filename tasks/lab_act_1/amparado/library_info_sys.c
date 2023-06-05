@@ -11,87 +11,64 @@ struct library {
 struct library lib[5];
 
 void print_library(int i, struct library lib[]);
+int checker(char book[], char borrower[], struct library lib[]);
+int compute_fine(int day);
 
 int main(void) {
-    // init
     int choice, i = 0;
-    char temp[20];
+    char temp_book[20], temp_borrower[20];
 
     while (1) {
         printf("\n\nWelcome to Library Information System.\n");
-        printf("Input title of the book: ");
-        gets(temp);
+        printf("1. Add book\n");
+        printf("2. Print library\n");
+        printf("3. Exit\n");
+        scanf("%d", &choice);
+        printf("\n\n");
+        getchar();
 
-        for (int j = 0; j < 5; j++) {
-            if (strcmp(temp, lib[j].title) == 0) {
-                printf("Book already exists. Exiting...\n");
-                print_library(i - 1, lib);
-                return 0;
+        if (choice == 1) {
+            printf("Input title of the book: ");
+            gets(temp_book);
+
+            printf("Input author of the book: ");
+            gets(lib[i].author);
+
+            printf("Input borrower of the book: ");
+            gets(temp_borrower);
+
+            printf("Input days borrowed of the book: ");
+            scanf("%d", &lib[i].days_borrowed);
+
+            // Check if book/borrower already exists
+            if (checker(temp_book, temp_borrower, lib)) {
+                continue;
             }
-        }
-
-        strcpy(lib[i].title, temp);
-
-        printf("Input author of the book: ");
-        gets(lib[i].author);
-
-        printf("Input borrower of the book: ");
-        gets(temp);
-
-        for (int j = 0; j < 5; j++) {
-            if (strcmp(temp, lib[j].borrower) == 0) {
-                printf("Strictly one book, one borrower policy. Exiting...\n");
-                print_library(i - 1, lib);
-                return 0;
+            else {
+                strcpy(lib[i].title, temp_book);
+                strcpy(lib[i].borrower, temp_borrower);
             }
+            
+            lib[i].fine = compute_fine(lib[i].days_borrowed);
         }
 
-        strcpy(lib[i].borrower, temp);
-
-        printf("Input days borrowed of the book: ");
-        scanf("%d", &lib[i].days_borrowed);
-
-        // Fine logic
-        if (lib[i].days_borrowed > 3) {
-            lib[i].fine = (lib[i].days_borrowed - 3) * 5;
-        }
-
-        else if (lib[i].days_borrowed < 1) {
-            printf("Error input. Exiting...\n");
+        else if (choice == 2) {
             print_library(i - 1, lib);
+        }
+
+        else if (choice == 3) {
             return 0;
         }
 
         else {
-            lib[i].fine = 0;
+            printf("Invalid input\n\n");
         }
 
-        // Book logic
-        printf("\nBook uploaded...\n");
-
-        if (i == 4) {
-            printf("Library is full. Exiting...\n");
-            print_library(i, lib);
-            break;
+        if (i >= 5) {
+            printf("Library is full.\n");
+            print_library(i - 1, lib);
         }
-
-        printf("Press 0 to exit, 1 to continue: ");
-        scanf("%d", &choice);
-        getchar();
-
-        if (choice == 0) {
-            print_library(i, lib);
-            break;
-        }
-
-        else if (choice == 1) {
-            i++;
-        }
-
-        else {
-            printf("Invalid input. Exiting...\n");
-            break;
-        }
+        i++;
     }
 }
 
@@ -103,5 +80,31 @@ void print_library(int i, struct library lib[]) {
         printf("Borrower: %s\n", lib[j].borrower);
         printf("Days borrowed: %d\n", lib[j].days_borrowed);
         printf("Fine: %d\n", lib[j].fine);
+    }
+}
+
+int checker(char book[], char borrower[], struct library lib[]) {
+    for (int i = 0; i < 5; i++) {
+        if (strcmp(book, lib[i].title) == 0) {
+            printf("Book already exists.");
+            return 1;
+        }
+    }
+
+    for (int i = 0; i < 5; i++) {
+        if (strcmp(borrower, lib[i].borrower) == 0) {
+            printf("Strictly one book, one borrower policy.");
+            return 1;
+        }
+    }   
+    return 0;
+}
+
+int compute_fine(int day) {
+    if (day > 3) {
+        return (day - 3) * 5;
+    }
+    else {
+        return 0;
     }
 }
