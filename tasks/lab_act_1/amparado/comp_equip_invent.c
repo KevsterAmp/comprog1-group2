@@ -12,7 +12,7 @@ struct equipment {
 struct user {
     char name[20];
     int type;
-    int year;
+    int year; 
     int month;
     int day;
     int cost;
