@@ -31,7 +31,6 @@ void printInfo(int index);
 
 int main(void) {
     int x;
-
     for (int i = 0; i < MAX_ENTRIES; i++) {
         getInput(i);
 
@@ -52,6 +51,9 @@ int main(void) {
 }
 
 void getInput(int index) {
+    char temp[10];
+    int time_temp1, time_temp2;
+    
     printf("Enter customer name: ");
     scanf(" %[^\n]", info[index].cust_name);
 
@@ -67,14 +69,39 @@ void getInput(int index) {
     printf("Enter vehicle color: ");
     scanf(" %s", info[index].veh_color);
 
-    printf("Enter vehicle type: ");
-    scanf(" %s", info[index].veh_type);
+    while (1) {
+        printf("Enter vehicle type (car, bus, truck): ");
+        scanf(" %s", temp);
+        if (strcmp(temp, "car") != 0) {
+            if (strcmp(temp, "bus") != 0) {
+                if (strcmp(temp, "truck") != 0) {
+                    printf("invalid input, try again\n");
+                    continue;
+                }}}
+        break;
+    } 
 
-    printf("Enter hour in: ");
-    scanf(" %d", &info[index].parking_hours.hour_in);
+    strcpy(info[index].veh_type, temp);
 
-    printf("Enter hour out: ");
-    scanf(" %d", &info[index].parking_hours.hour_out);
+    do {
+        printf("Enter hour in: ");
+        scanf(" %d", &time_temp1);
+
+        if (time_temp1 > 2400 || (time_temp1 % 100) > 60)
+            printf("Invalid input, try again\n");
+    } while(time_temp1 > 2400 || (time_temp1 % 100) > 60);
+
+    do {
+        printf("Enter hour out: ");
+        scanf(" %d", &time_temp2);
+
+        if (time_temp2 > 2400 || (time_temp2 % 100) > 60)
+            printf("Invalid input, try again\n");
+    } while(time_temp2 > 2400 || (time_temp2 % 100) > 60);
+
+    info[index].parking_hours.hour_in = time_temp1;
+    info[index].parking_hours.hour_out = time_temp2;
+
 }
 
 void computeFees(int index) {
@@ -82,12 +109,12 @@ void computeFees(int index) {
         info[i].parking_hours.total_hours = (info[i].parking_hours.hour_out - info[i].parking_hours.hour_in) / 100;
 
         if (strcmp(info[i].veh_type, "car") == 0) {
-            info[i].parking_hours.fee = info[i].parking_hours.total_hours * CAR_RATE;
+            info[i].parking_hours.fee = info[i].parking_hours.total_hours * 25;
         } else if (strcmp(info[i].veh_type, "bus") == 0) {
-            info[i].parking_hours.fee = info[i].parking_hours.total_hours * BUS_RATE;
+            info[i].parking_hours.fee = info[i].parking_hours.total_hours * 50;
         } else if (strcmp(info[i].veh_type, "truck") == 0) {
-            info[i].parking_hours.fee = info[i].parking_hours.total_hours * TRUCK_RATE;
-        }
+            info[i].parking_hours.fee = info[i].parking_hours.total_hours * 75;
+        } 
     }
 }
 
