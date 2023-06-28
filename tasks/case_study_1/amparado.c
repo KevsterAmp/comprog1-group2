@@ -7,7 +7,7 @@ struct resto {
         char type[20];
         char item_code[10];
         float price;
-        char description[20];
+        char description[30];
         int quantity;
         float total_item_amt;
     };
