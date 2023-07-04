@@ -23,21 +23,31 @@ void print_menu(char choice);
 char choose_menu();
 void print_cart();
 void bill_out(int table_num);
+void clear_input_buffer();
 
 int main(void) {  
     char choice, temp_item_code[10], bill_out_choice;
     int flag = 0, table_num;
     init_menu(); // Call the menu function to populate the items
-    printf("PLEASE INPUT TABLE NUMBER: ");
-    scanf("%d", &table_num);
-    getchar();
+
+    while (1) {
+        printf("PLEASE INPUT TABLE NUMBER: ");
+        if (scanf("%d", &table_num) != 1 || table_num < 0) {
+            clear_input_buffer();
+            printf("Invalid input, try again\n\n");
+        }
+
+        else {
+            getchar();
+            break;
+        }
+    }
 
     while (1) {
         printf("\n\nWELCOME TO MASARAP-KUMAIN RESTAURANT\n\nMasarap-Kumain restaurant offers:\n\n");
         choice = choose_menu();
-
+        getchar();
         while (1) {
-            getchar();
             print_menu(choice);
             printf("What would you like to eat? (Type X to choose another type of serving)\n");
             gets(temp_item_code);
@@ -49,11 +59,19 @@ int main(void) {
 
             for (int i = 0; i < 10; i++) {
                 if (strcmp(temp_item_code, restaurant.item[i].item_code) == 0) {
-                    printf("How many would you like to buy? ");
-                    scanf("%d", &restaurant.item[i].quantity);
-                    printf("\n\n");
-                    restaurant.item[i].total_item_amt = restaurant.item[i].quantity * restaurant.item[i].price;
-                    flag = 1;
+                    while (1) {
+                        printf("How many would you like to buy? ");
+                        if (scanf("%d", &restaurant.item[i].quantity) != 1 || restaurant.item[i].quantity <= 0) {
+                            clear_input_buffer();
+                            printf("Invalid input, try again\n\n");
+                        }
+                        else {
+                            printf("\n\n");
+                            restaurant.item[i].total_item_amt = restaurant.item[i].quantity * restaurant.item[i].price;
+                            flag = 1;
+                            break;
+                        }
+                    }
                     break;
                 }
             }
@@ -61,12 +79,14 @@ int main(void) {
             if (flag == 0) {
                 printf("Invalid input, try again\n\n");
             }
+
             else {
                 print_cart();
                 getchar();
                 while (1) {
                     printf("Bill out (y/n)? ");
                     bill_out_choice = getchar();
+                    clear_input_buffer();
                     if (bill_out_choice == 'y') {
                         // call bill out function
                         bill_out(table_num);
@@ -77,7 +97,7 @@ int main(void) {
                         break;
                     }
                     else {
-                        printf("Invalid Input. Try again");
+                        printf("Invalid Input. Try again\n\n");
                     }
                 }
             }
@@ -233,8 +253,23 @@ void bill_out(int table_num) {
     printf("TOTAL BILL: %.2f\n", restaurant.total_bill);
     printf("DISCOUNT: %.2f\n", restaurant.discount);
     printf("NET BILL: %.2f\n\n",  restaurant.net_bill);
-    printf("AMOUNT TENDERED: ");
-    scanf("%f", &amount_tendered);
+    while (1) {
+        printf("AMOUNT TENDERED: ");
+        if (scanf("%f", &amount_tendered) != 1 || amount_tendered < restaurant.net_bill) {
+            clear_input_buffer();
+            printf("Invalid input, try again\n\n");
+        }
+        else {
+            break;
+        }
+    }
     printf("\n\nCHANGE: %.2f", amount_tendered - restaurant.net_bill);
-
 }
+
+void clear_input_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        // Clear the input buffer
+    }
+}
+
